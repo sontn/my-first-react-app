@@ -8,8 +8,8 @@ const user = {
 };
 
 const mockUser = {
-  username: 'son',
-  password: '123456',
+  username: process.env.REACT_APP_MOCK_USERNAME,
+  password: process.env.REACT_APP_MOCK_PASSWORD,
 };
 
 function App() {
