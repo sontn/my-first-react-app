@@ -1,71 +1,39 @@
-import React, { useState } from 'react';
-import ConditionalExample from './ConditionalExample';
+import { useState } from 'react';
 
-const user = {
-  name: 'Son',
-  imageUrl: 'https://i.imgur.com/yXOvdOSs.jpg',
-  imageSize: 90,
-};
-
-const mockUser = {
-  username: process.env.REACT_APP_MOCK_USERNAME,
-  password: process.env.REACT_APP_MOCK_PASSWORD,
-};
-
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const handleLogin = () => {
-    if (username === mockUser.username && password === mockUser.password) {
-      setIsLoggedIn(true);
-      setError('');
-    } else {
-      setError('Invalid username or password');
-    }
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUsername('');
-    setPassword('');
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      handleLogin();
-    }
-  };
-
+function Square({ value, onSquareClick }) {
   return (
-    <div>
-      <ConditionalExample isLoggedIn={isLoggedIn} user={user} />
-      {isLoggedIn ? (
-        <button onClick={handleLogout}>Log out</button>
-      ) : (
-        <div>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <button onClick={handleLogin}>Log in</button>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-        </div>
-      )}
-    </div>
+    <button className="square" onClick={onSquareClick}>
+      {value}
+    </button>
   );
 }
 
-export default App;
+export default function Board() {
+  const [squares, setSquares] = useState(Array(9).fill(null));
+
+  function handleClick(i) {
+    const nextSquares = squares.slice();
+    nextSquares[i] = 'X';
+    setSquares(nextSquares);
+  }
+
+  return (
+    <>
+      <div className="board-row">
+        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
+        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
+        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
+      </div>
+      <div className="board-row">
+        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
+        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
+        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
+      </div>
+      <div className="board-row">
+        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
+        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
+        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
+      </div>
+    </>
+  );
+}
