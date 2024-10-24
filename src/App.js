@@ -1,29 +1,69 @@
 import React, { useState } from 'react';
-import './App.css';
+import ConditionalExample from './ConditionalExample';
+
+const user = {
+  name: 'Son',
+  imageUrl: 'https://i.imgur.com/yXOvdOSs.jpg',
+  imageSize: 90,
+};
+
+const mockUser = {
+  username: 'son',
+  password: '123456',
+};
 
 function App() {
-  return (
-    <div className="container">
-      <h1>Hello, React!</h1>
-      <Greeting name="Sơn" />
-      <ClickCounter />
-    </div>
-  );
-}
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-function Greeting(props) {
-  return <h2>Welcome, {props.name}!</h2>;
-}
+  const handleLogin = () => {
+    if (username === mockUser.username && password === mockUser.password) {
+      setIsLoggedIn(true);
+      setError('');
+    } else {
+      setError('Invalid username or password');
+    }
+  };
 
-function ClickCounter() {
-  const [count, setCount] = useState(0);
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUsername('');
+    setPassword('');
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleLogin();
+    }
+  };
 
   return (
     <div>
-      {count > 5 && <p>You clicked more than 5 times</p>}
-      <button onClick={() => setCount(count + 1)}>
-        Click me {count} times
-      </button>
+      <ConditionalExample isLoggedIn={isLoggedIn} user={user} />
+      {isLoggedIn ? (
+        <button onClick={handleLogout}>Log out</button>
+      ) : (
+        <div>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            onKeyPress={handleKeyPress}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyPress={handleKeyPress}
+          />
+          <button onClick={handleLogin}>Log in</button>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+        </div>
+      )}
     </div>
   );
 }
