@@ -66,10 +66,6 @@ export default function Game() {
     setCurrentMove(nextHistory.length - 1);
   }
 
-  function jumpTo(nextMove) {
-    setCurrentMove(nextMove);
-  }
-
   function resetGame() {
     setHistory([
       Array(BOARD_SIZE)
@@ -78,20 +74,6 @@ export default function Game() {
     ]);
     setCurrentMove(0);
   }
-
-  const moves = history.map((_, move) => {
-    let description;
-    if (move > 0) {
-      description = 'Go to move #' + move;
-    } else {
-      description = 'Go to game start';
-    }
-    return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
-      </li>
-    );
-  });
 
   const winner = calculateWinner(currentSquares);
 
@@ -106,17 +88,16 @@ export default function Game() {
             onPlay={handlePlay}
           />
         </div>
-        <div className="game-info">
-          {winner && (
-            <div>
-              <p>Winner: {winner}</p>
-              <button className="reset-button" onClick={resetGame}>
-                Reset Game
-              </button>
-            </div>
-          )}
-          <ol>{moves}</ol>
-        </div>
+      </div>
+      <div className="game-info">
+        {winner && (
+          <div>
+            <p>Winner: {winner}</p>
+          </div>
+        )}
+        <button className="reset-button" onClick={resetGame}>
+          Reset Game
+        </button>
       </div>
     </div>
   );
