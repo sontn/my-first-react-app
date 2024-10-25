@@ -1,71 +1,163 @@
 import React, { useState } from 'react';
-import ConditionalExample from './ConditionalExample';
+import './App.css';
 
-const user = {
-  name: 'Son',
-  imageUrl: 'https://i.imgur.com/yXOvdOSs.jpg',
-  imageSize: 90,
-};
+function Square({ value, onSquareClick }) {
+  return (
+    <button className="square" onClick={onSquareClick}>
+      {value}
+    </button>
+  );
+}
 
-const mockUser = {
-  username: process.env.REACT_APP_MOCK_USERNAME,
-  password: process.env.REACT_APP_MOCK_PASSWORD,
-};
-
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const handleLogin = () => {
-    if (username === mockUser.username && password === mockUser.password) {
-      setIsLoggedIn(true);
-      setError('');
-    } else {
-      setError('Invalid username or password');
+function Board({ xIsNext, squares, onPlay }) {
+  function handleClick(row, col) {
+    if (squares[row][col] || calculateWinner(squares)) {
+      return;
     }
-  };
+    const nextSquares = squares.map((row) => [...row]);
+    nextSquares[row][col] = xIsNext ? 'X' : 'O';
+    onPlay(nextSquares);
+  }
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUsername('');
-    setPassword('');
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      handleLogin();
-    }
-  };
+  const winner = calculateWinner(squares);
+  let status;
+  if (winner) {
+    status = 'Winner: ' + winner;
+  } else {
+    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+  }
 
   return (
-    <div>
-      <ConditionalExample isLoggedIn={isLoggedIn} user={user} />
-      {isLoggedIn ? (
-        <button onClick={handleLogout}>Log out</button>
-      ) : (
-        <div>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            onKeyPress={handleKeyPress}
+    <>
+      <div className="status">{status}</div>
+      <div className="board">
+        {squares.map((row, rowIndex) => (
+          <div key={rowIndex} className="board-row">
+            {row.map((_, colIndex) => (
+              <Square
+                key={colIndex}
+                value={squares[rowIndex][colIndex]}
+                onSquareClick={() => handleClick(rowIndex, colIndex)}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+export default function Game() {
+  const [history, setHistory] = useState([
+    Array(30)
+      .fill(null)
+      .map(() => Array(30).fill(null)),
+  ]);
+  const [currentMove, setCurrentMove] = useState(0);
+  const xIsNext = currentMove % 2 === 0;
+  const currentSquares = history[currentMove];
+
+  function handlePlay(nextSquares) {
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
+  }
+
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove);
+  }
+
+  const moves = history.map((_, move) => {
+    let description;
+    if (move > 0) {
+      description = 'Go to move #' + move;
+    } else {
+      description = 'Go to game start';
+    }
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
+
+  return (
+    <div className="game-container">
+      <h1 className="game-title">Tic-Tac-Toe (Caro) 30x30</h1>
+      <div className="game">
+        <div className="game-board">
+          <Board
+            xIsNext={xIsNext}
+            squares={currentSquares}
+            onPlay={handlePlay}
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <button onClick={handleLogin}>Log in</button>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
-      )}
+        <div className="game-info">
+          <ol>{moves}</ol>
+        </div>
+      </div>
     </div>
   );
 }
 
-export default App;
+function calculateWinner(squares) {
+  const size = squares.length;
+  const winLength = 5;
+
+  // Check horizontal, vertical, and diagonal
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+      if (!squares[row][col]) continue;
+
+      // Check horizontal
+      if (col <= size - winLength) {
+        let win = true;
+        for (let i = 1; i < winLength; i++) {
+          if (squares[row][col] !== squares[row][col + i]) {
+            win = false;
+            break;
+          }
+        }
+        if (win) return squares[row][col];
+      }
+
+      // Check vertical
+      if (row <= size - winLength) {
+        let win = true;
+        for (let i = 1; i < winLength; i++) {
+          if (squares[row][col] !== squares[row + i][col]) {
+            win = false;
+            break;
+          }
+        }
+        if (win) return squares[row][col];
+      }
+
+      // Check diagonal (top-left to bottom-right)
+      if (row <= size - winLength && col <= size - winLength) {
+        let win = true;
+        for (let i = 1; i < winLength; i++) {
+          if (squares[row][col] !== squares[row + i][col + i]) {
+            win = false;
+            break;
+          }
+        }
+        if (win) return squares[row][col];
+      }
+
+      // Check diagonal (top-right to bottom-left)
+      if (row <= size - winLength && col >= winLength - 1) {
+        let win = true;
+        for (let i = 1; i < winLength; i++) {
+          if (squares[row][col] !== squares[row + i][col - i]) {
+            win = false;
+            break;
+          }
+        }
+        if (win) return squares[row][col];
+      }
+    }
+  }
+
+  return null;
+}
