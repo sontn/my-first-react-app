@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
 }
 
 .game-title {
@@ -30,7 +29,8 @@
 }
 
 .game-info {
-  margin-left: 20px;
+  margin-top: 20px;
+  text-align: center;
   overflow-y: auto;
   max-height: 80vh;
 }
@@ -83,6 +83,7 @@
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s;
+  margin-top: 10px;
 }
 
 .reset-button:hover {
@@ -106,4 +107,11 @@
 
 .game-info .reset-button:hover {
   background-color: #45a049;
+}
+
+.winner-announcement {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #4CAF50; /* Green color, you can change this */
 }
