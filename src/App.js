@@ -94,7 +94,7 @@ export default function Game() {
 
   return (
     <div className="game-container">
-      <h1 className="game-title">Tic-Tac-Toe (Caro) 30x30</h1>
+      <h1 className="game-title">Happy Caro</h1>
       <div className="game">
         <div className="game-board">
           <Board
