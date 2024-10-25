@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import './App.css';
 
+const BOARD_SIZE = 12;
+const WIN_LENGTH = 5;
+
 function Square({ value, onSquareClick }) {
   return (
     <button className="square" onClick={onSquareClick}>
@@ -49,9 +52,9 @@ function Board({ xIsNext, squares, onPlay }) {
 
 export default function Game() {
   const [history, setHistory] = useState([
-    Array(30)
+    Array(BOARD_SIZE)
       .fill(null)
-      .map(() => Array(30).fill(null)),
+      .map(() => Array(BOARD_SIZE).fill(null)),
   ]);
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
@@ -69,9 +72,9 @@ export default function Game() {
 
   function resetGame() {
     setHistory([
-      Array(30)
+      Array(BOARD_SIZE)
         .fill(null)
-        .map(() => Array(30).fill(null)),
+        .map(() => Array(BOARD_SIZE).fill(null)),
     ]);
     setCurrentMove(0);
   }
@@ -121,7 +124,6 @@ export default function Game() {
 
 function calculateWinner(squares) {
   const size = squares.length;
-  const winLength = 5;
 
   // Check horizontal, vertical, and diagonal
   for (let row = 0; row < size; row++) {
@@ -129,9 +131,9 @@ function calculateWinner(squares) {
       if (!squares[row][col]) continue;
 
       // Check horizontal
-      if (col <= size - winLength) {
+      if (col <= size - WIN_LENGTH) {
         let win = true;
-        for (let i = 1; i < winLength; i++) {
+        for (let i = 1; i < WIN_LENGTH; i++) {
           if (squares[row][col] !== squares[row][col + i]) {
             win = false;
             break;
@@ -141,9 +143,9 @@ function calculateWinner(squares) {
       }
 
       // Check vertical
-      if (row <= size - winLength) {
+      if (row <= size - WIN_LENGTH) {
         let win = true;
-        for (let i = 1; i < winLength; i++) {
+        for (let i = 1; i < WIN_LENGTH; i++) {
           if (squares[row][col] !== squares[row + i][col]) {
             win = false;
             break;
@@ -153,9 +155,9 @@ function calculateWinner(squares) {
       }
 
       // Check diagonal (top-left to bottom-right)
-      if (row <= size - winLength && col <= size - winLength) {
+      if (row <= size - WIN_LENGTH && col <= size - WIN_LENGTH) {
         let win = true;
-        for (let i = 1; i < winLength; i++) {
+        for (let i = 1; i < WIN_LENGTH; i++) {
           if (squares[row][col] !== squares[row + i][col + i]) {
             win = false;
             break;
@@ -165,9 +167,9 @@ function calculateWinner(squares) {
       }
 
       // Check diagonal (top-right to bottom-left)
-      if (row <= size - winLength && col >= winLength - 1) {
+      if (row <= size - WIN_LENGTH && col >= WIN_LENGTH - 1) {
         let win = true;
-        for (let i = 1; i < winLength; i++) {
+        for (let i = 1; i < WIN_LENGTH; i++) {
           if (squares[row][col] !== squares[row + i][col - i]) {
             win = false;
             break;
