@@ -67,6 +67,15 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
+  function resetGame() {
+    setHistory([
+      Array(30)
+        .fill(null)
+        .map(() => Array(30).fill(null)),
+    ]);
+    setCurrentMove(0);
+  }
+
   const moves = history.map((_, move) => {
     let description;
     if (move > 0) {
@@ -81,6 +90,8 @@ export default function Game() {
     );
   });
 
+  const winner = calculateWinner(currentSquares);
+
   return (
     <div className="game-container">
       <h1 className="game-title">Tic-Tac-Toe (Caro) 30x30</h1>
@@ -93,6 +104,14 @@ export default function Game() {
           />
         </div>
         <div className="game-info">
+          {winner && (
+            <div>
+              <p>Winner: {winner}</p>
+              <button className="reset-button" onClick={resetGame}>
+                Reset Game
+              </button>
+            </div>
+          )}
           <ol>{moves}</ol>
         </div>
       </div>
